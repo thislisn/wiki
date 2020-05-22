@@ -7,12 +7,11 @@ import com.wiki.example.framework.SearchKey;
 import com.wiki.example.framework.dto.Cities;
 import com.wiki.example.framework.dto.Continents;
 import com.wiki.example.pages.componentes.CalendarBox;
+import lombok.Getter;
 import org.openqa.selenium.By;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -20,10 +19,12 @@ import static com.codeborne.selenide.Selenide.$$;
 import static com.wiki.example.framework.CountriesCollector.collectCountries;
 import static com.wiki.example.framework.JsonReader.readJson;
 
+@Getter
 public class SearchResultPage extends BasePage {
     private static final String PAGE_URL = "https://en.wikipedia.org/wiki/%s";
     private static final String CITIES_JSON_PATH = "src/cities.json";
     private static final String CONTINENTS_JSON_PATH = "src/continents.json";
+    private static final String DIGIT_MASK = "(.)*(\\d)(.)*";
 
     private CalendarBox calendar = new CalendarBox();
     private SelenideElement header = $(By.cssSelector("h1#firstHeading"));
@@ -70,30 +71,32 @@ public class SearchResultPage extends BasePage {
     }
 
     public Map<String, List<String>> getAllLinksMap() {
+        Pattern digitPattern = Pattern.compile(DIGIT_MASK);
         String selectedDay = calendar.getSelectedDay();
         Map<String, List<String>> linksMap;
-        List<String> linksList;
         if (BaseContext.getValue(ContextKey.LINKS_MAP) == null) {
             BaseContext.setValue(ContextKey.LINKS_MAP, new HashMap<>());
-    }
-            Map<String, List<String>> map = (Map<String, List<String>>) BaseContext.getValue(ContextKey.LINKS_MAP);
-            if (!map.containsKey(selectedDay)) {
-                linksMap = map;
-                linksList = links.stream()
-                        .filter(link -> !link.getText().isEmpty() && link.getText() != null)
-                        .distinct()
-                        .map(SelenideElement::getText)
-                        .collect(Collectors.toList());
-                linksMap.put(selectedDay, linksList);
-                BaseContext.setValue(ContextKey.LINKS_MAP, linksMap);
-        }  else {
-            linksMap = (Map<String, List<String>>) BaseContext.getValue(ContextKey.LINKS_MAP);
+        }
+        Map<String, List<String>> map = (Map<String, List<String>>) BaseContext.getValue(ContextKey.LINKS_MAP);
+        linksMap = map;
+        if (!map.containsKey(selectedDay)) {
+            Set<SelenideElement> uniqueValues = new HashSet<>();
+            List<String> linksList = links.stream()
+                    .filter(link -> {
+                        String linkText = link.getText();
+                        return !linkText.isEmpty() && !digitPattern.matcher(linkText).matches();
+                    })
+                    .filter(uniqueValues::add)
+                    .map(SelenideElement::getText)
+                    .collect(Collectors.toList());
+            linksMap.put(selectedDay, linksList);
+            BaseContext.setValue(ContextKey.LINKS_MAP, linksMap);
         }
         return linksMap;
     }
 
-    public String getSelectedDay(){
-       return calendar.getSelectedDay();
+    public String getSelectedDay() {
+        return calendar.getSelectedDay();
     }
 
     public List<Integer> getFoundContinentsResults() {
