@@ -1,7 +1,7 @@
 package com.wiki.example.stepdefs;
 
 import com.codeborne.selenide.Configuration;
-import cucumber.api.java.Before;
+import io.cucumber.java.Before;
 
 import static com.codeborne.selenide.WebDriverRunner.CHROME;
 
