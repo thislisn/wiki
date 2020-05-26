@@ -6,6 +6,7 @@ import com.wiki.example.framework.SearchKey;
 import com.wiki.example.pages.HomePage;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import io.qameta.allure.Step;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +19,15 @@ public class WikiSearchSteps {
     private final HomePage homePage = new HomePage();
 
 
+    @Step()
     @Given("^I open home wiki page$")
     public void openHomePage() {
         homePage.open();
     }
 
+    @Step
     @When("^I search for today date$")
-    public void searchForDate() {
+    public void searchForTodayDate() {
         LocalDateTime today = getToday();
         int day = today.getDayOfMonth();
         String monthName = getFullMonthName(today.getMonthOfYear());

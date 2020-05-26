@@ -6,6 +6,7 @@ import com.wiki.example.framework.SearchKey;
 import com.wiki.example.pages.SearchResultPage;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.qameta.allure.Step;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +22,20 @@ public class WikiResultSteps {
     private static final Logger logger = LoggerFactory.getLogger(WikiResultSteps.class);
     private final SearchResultPage searchResultPage = new SearchResultPage();
 
+    @Step
     @When("^I wait for search result page loaded$")
     public void waitSearchResultsPageloaded() {
         SearchKey monthDay = (SearchKey) BaseContext.getValue(ContextKey.SEARCH_KEY);
         searchResultPage.waiForPageLoaded(monthDay);
     }
 
+    @Step
     @When("^I collect links on Search Results Page$")
     public void collectLinksFromSearchResultsPage() {
         searchResultPage.getAllLinksMap();
     }
 
+    @Step
     @When("^I look for continents on Search Results Page$")
     public void lookForContinentsLinksFromSearchResultsPage() {
         Map<String, List<String>> linksMap = (Map<String, List<String>>) BaseContext.getValue(ContextKey.LINKS_MAP);
@@ -45,6 +49,7 @@ public class WikiResultSteps {
         BaseContext.setValue(ContextKey.FOUND_CONTINENTS, list);
     }
 
+    @Step
     @When("^I look for countries on Search Results Page$")
     public void lookForCountriesLinksFromSearchResultsPage() {
         Map<String, List<String>> linksMap = (Map<String, List<String>>) BaseContext.getValue(ContextKey.LINKS_MAP);
@@ -58,6 +63,7 @@ public class WikiResultSteps {
         BaseContext.setValue(ContextKey.FOUND_COUNTRIES, list);
     }
 
+    @Step
     @When("^I look for cities on Search Results Page$")
     public void lookForCitiesLinksFromSearchResultsPage() {
         Map<String, List<String>> linksMap = (Map<String, List<String>>) BaseContext.getValue(ContextKey.LINKS_MAP);
@@ -71,6 +77,7 @@ public class WikiResultSteps {
         BaseContext.setValue(ContextKey.FOUND_CITIES, list);
     }
 
+    @Step
     @When("^I click on tomorrow date on Calendar on Search Results Page$")
     public void clickTomorrowDateOnCalendarOnSearchResultsPage() {
         LocalDateTime tomorrow = getTomorrow();
@@ -79,6 +86,7 @@ public class WikiResultSteps {
         searchResultPage.clickDate(monthName, day);
     }
 
+    @Step
     @Then("^I compare found continents on Search Results Page$")
     public void compareFoundContinents() {
         List<Integer> foundContinents = (List<Integer>) BaseContext.getValue(ContextKey.FOUND_CONTINENTS);
@@ -86,6 +94,7 @@ public class WikiResultSteps {
         System.out.println(String.format("Tomorrow was found on wiki %s continents", foundContinents.get(1)));
     }
 
+    @Step
     @Then("^I compare found countries on Search Results Page$")
     public void compareFoundCountries() {
         List<Integer> foundCountries = (List<Integer>) BaseContext.getValue(ContextKey.FOUND_COUNTRIES);
@@ -93,6 +102,7 @@ public class WikiResultSteps {
         System.out.println(String.format("Tomorrow was found on wiki %s countries", foundCountries.get(1)));
     }
 
+    @Step
     @Then("^I compare found cities on Search Results Page$")
     public void compareFoundCities() {
         List<Integer> foundCities = (List<Integer>) BaseContext.getValue(ContextKey.FOUND_COUNTRIES);
@@ -100,6 +110,7 @@ public class WikiResultSteps {
         System.out.println(String.format("Tomorrow was found on wiki %s cities", foundCities.get(1)));
     }
 
+    @Step
     @When("^I check header name is correct on Search Results Page$")
     public void checkHeaderNameIsCorrect() {
         SearchKey monthDay = (SearchKey) BaseContext.getValue(ContextKey.SEARCH_KEY);
